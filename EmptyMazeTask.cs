@@ -6,18 +6,20 @@ namespace Mazes
     {
         public static void MoveOut(Robot robot, int width, int height)
         {
-                GoInVerticallWall(robot, width);
-                GoinHorisontalWall(robot, height);
+            MoveToVerticalWalll(robot, width, Direction.Right);
+            MoveToHorizontalWall(robot, height, Direction.Down);
         }
 
-        public static void GoInVerticallWall(Robot robot, int width)
+        public static void MoveToVerticalWalll(Robot robot, int count, Direction direction)
         {
-            while (robot.X < width - 2) robot.MoveTo(Direction.Right);
+            while (robot.X < count - 2)
+                robot.MoveTo(direction);
         }
 
-        public static void GoinHorisontalWall(Robot robot, int height)
+        public static void MoveToHorizontalWall(Robot robot, int count, Direction direction)
         {
-            while (robot.Y < height - 2) robot.MoveTo(Direction.Down);
+            while (robot.Y < count - 2)
+                robot.MoveTo(direction);
         }
     }
 }
