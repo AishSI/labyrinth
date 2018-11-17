@@ -1,40 +1,37 @@
-﻿namespace Mazes
+﻿using System.Linq;
+
+namespace Mazes
 {
     public static class DiagonalMazeTask
     {
-        //static int flag = 1; //Значение по умолчанию. Предполагает, что ширина больше высоты и задает первый шаг по горизонтали.
-        //static int aspectRatio = 1; // По умолчанию устанавливается соотношение шага по вертикали и горизонтали как 1:1.
-
         public static void MoveOut(Robot robot, int width, int height)
         {
-            if (width > height)
-                while (robot.Y < height - 2)
-                    MoveToHorizontalDiagonal(robot, width, height);
-            else
-                while (robot.Y < height - 2)
-                    MoveToVerticalDiagonal(robot, width, height);
-            if (robot.X < width - 2)
-                MoveToHorizontalDiagonal(robot, width, height);
-            if (robot.Y < height - 2)
-                MoveToVerticalDiagonal(robot, width, height);
+            int[] pole = { width - 2, height - 2 }; // Размер внутреннего поля
+            int smallerSideStep = System.Math.Min(pole[0], pole[1]); // Размер меньшей стороны
+            int[] numberOfSteps = { pole[0] / smallerSideStep, pole[1] / smallerSideStep }; // Количество клеток по горизонтали и вертикали в одном ходе
+            int countOfCompleteSteps = System.Math.Min(pole[0] - 1 / numberOfSteps[0], pole[1] - 1 / numberOfSteps[1]); // Количество полных ходов
+            for (int i = 0; i < countOfCompleteSteps; i++)
+                MoveToDiagonal(robot, numberOfSteps);
+            MoveToLastSteps(robot, pole, numberOfSteps);
         }
 
-        public static void MoveToHorizontalDiagonal(Robot robot, int width, int height)
+        public static void MoveToDiagonal(Robot robot, int[] numberOfSteps)
         {
-            int aspectRatio = (width-2) / (height-2); 
-                for (int x = 0; x < aspectRatio; x++)
-                    robot.MoveTo(Direction.Right);
-                if (robot.Y < height - 2)
-                    robot.MoveTo(Direction.Down);
+            for (int i = 0; i < numberOfSteps.Max(); i++)
+                robot.MoveTo(numberOfSteps[0] > numberOfSteps[1] ? Direction.Right: Direction.Down);
+            for (int i = 0; i < numberOfSteps.Min(); i++)
+                robot.MoveTo(numberOfSteps[0] > numberOfSteps[1] ? Direction.Down : Direction.Right);
         }
 
-        public static void MoveToVerticalDiagonal(Robot robot, int width, int height)
+        //Если полных ходов не хватило для выхода, определяемся и делаем вертикальный или горизонтальный "полуход";
+        public static void MoveToLastSteps(Robot robot, int[] pole, int[] numberOfSteps)
         {
-            int aspectRatio = (height-2) / (width-2);
-                for (int y = 0; y < aspectRatio; y++)
-                    robot.MoveTo(Direction.Down);
-                if (robot.X < width - 2)
+            if (robot.X < pole[0])
+                for (int i = 0; i < numberOfSteps[0]; i++)
                     robot.MoveTo(Direction.Right);
+            if (robot.Y < pole[1])
+                for (int i = 0; i < numberOfSteps[1]; i++)
+                    robot.MoveTo(Direction.Down);
         }
     }
 }
