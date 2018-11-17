@@ -2,9 +2,9 @@
 
 namespace Mazes
 {
-	public static class SnakeMazeTask
-	{
-		public static void MoveOut(Robot robot, int width, int height)
+    public static class SnakeMazeTask
+    {
+        public static void MoveOut(Robot robot, int width, int height)
         {
             while (robot.Y < height - 2)
             {
@@ -16,7 +16,7 @@ namespace Mazes
 
         public static void MoveTolWall(Robot robot, int count, Direction direction)
         {
-            for (int i = 0; i < count - 3; i++ )            
+            for (int i = 0; i < count - 3; i++)
                 robot.MoveTo(direction);
         }
 
@@ -28,8 +28,8 @@ namespace Mazes
         }
 
         public static void MoveToNextSegment(Robot robot, int width)
-        {            
+        {
             MoveTolWall(robot, 5, Direction.Down);
-        } 
+        }
     }
 }

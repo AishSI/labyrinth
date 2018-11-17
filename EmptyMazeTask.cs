@@ -14,6 +14,6 @@ namespace Mazes
         {
             for (int i = 0; i < count - 3; i++)
                 robot.MoveTo(direction);
-        } 
+        }
     }
 }
