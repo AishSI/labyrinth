@@ -1,37 +1,40 @@
-﻿using System.Linq;
-
+﻿
 namespace Mazes
 {
-    public static class DiagonalMazeTask
-    {
-        public static void MoveOut(Robot robot, int width, int height)
-        {
-            int[] pole = { width - 2, height - 2 }; // Размер внутреннего поля
-            int smallerSideStep = System.Math.Min(pole[0], pole[1]); // Размер меньшей стороны
-            int[] numberOfSteps = { pole[0] / smallerSideStep, pole[1] / smallerSideStep }; // Количество клеток по горизонтали и вертикали в одном ходе
-            int countOfCompleteSteps = System.Math.Min(pole[0] - 1 / numberOfSteps[0], pole[1] - 1 / numberOfSteps[1]); // Количество полных ходов
-            for (int i = 0; i < countOfCompleteSteps; i++)
-                MoveToDiagonal(robot, numberOfSteps);
-            MoveToLastSteps(robot, pole, numberOfSteps);
-        }
+	public static class DiagonalMazeTask
+	{
+		static int vectorSwitch;
+		static int rightSteps;
+		static int downSteps;
 
-        public static void MoveToDiagonal(Robot robot, int[] numberOfSteps)
-        {
-            for (int i = 0; i < numberOfSteps.Max(); i++)
-                robot.MoveTo(numberOfSteps[0] > numberOfSteps[1] ? Direction.Right: Direction.Down);
-            for (int i = 0; i < numberOfSteps.Min(); i++)
-                robot.MoveTo(numberOfSteps[0] > numberOfSteps[1] ? Direction.Down : Direction.Right);
-        }
+		public static void MoveOut(Robot robot, int width, int height)
+		{
+			int fieldWidth = width - 2;
+			int fieldHeight = height - 2;
+			int minField = (fieldWidth > fieldHeight) ? fieldHeight : fieldWidth;
+			SettingsStep(fieldWidth, fieldHeight, minField);
+			while ((robot.X < fieldWidth) || (robot.Y < fieldHeight))
+			{
+				vectorSwitch *= -1;
+				MoveToExit(robot, vectorSwitch, rightSteps, downSteps);
+			}
+		}
 
-        //Если полных ходов не хватило для выхода, определяемся и делаем вертикальный или горизонтальный "полуход";
-        public static void MoveToLastSteps(Robot robot, int[] pole, int[] numberOfSteps)
-        {
-            if (robot.X < pole[0])
-                for (int i = 0; i < numberOfSteps[0]; i++)
-                    robot.MoveTo(Direction.Right);
-            if (robot.Y < pole[1])
-                for (int i = 0; i < numberOfSteps[1]; i++)
-                    robot.MoveTo(Direction.Down);
-        }
-    }
+		public static void SettingsStep(int width, int height, int min)
+		{
+			vectorSwitch = (width > height) ? -1 : 1;
+			rightSteps = width / min;
+			downSteps = height / min;
+		}
+
+		public static void MoveToExit(Robot robot, int vectorSwith, int rightSteps, int downSteps)
+		{
+			if (vectorSwith > 0) // vector = 1 горизонтальный ход, -1 вертикальный
+				for (int x = 0; x < rightSteps; x++)
+					robot.MoveTo(Direction.Right);
+			else
+				for (int y = 0; y < downSteps; y++)
+					robot.MoveTo(Direction.Down);
+		}
+	}
 }
