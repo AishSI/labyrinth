@@ -1,5 +1,4 @@
-﻿
-namespace Mazes
+﻿namespace Mazes
 {
 	public static class DiagonalMazeTask
 	{
@@ -11,18 +10,24 @@ namespace Mazes
 		{
 			int fieldWidth = width - 2;
 			int fieldHeight = height - 2;
-			int minField = (fieldWidth > fieldHeight) ? fieldHeight : fieldWidth;
-			SettingsStep(fieldWidth, fieldHeight, minField);
-			while ((robot.X < fieldWidth) || (robot.Y < fieldHeight))
+			int fieldMmin = (fieldWidth > fieldHeight)
+				? fieldHeight
+				: fieldWidth;
+
+			SettingsStep(fieldWidth, fieldHeight, fieldMmin);
+
+			while (!robot.Finished)
 			{
-				vectorSwitch *= -1;
 				MoveToExit(robot, vectorSwitch, rightSteps, downSteps);
+				vectorSwitch *= -1;
 			}
 		}
 
 		public static void SettingsStep(int width, int height, int min)
 		{
-			vectorSwitch = (width > height) ? -1 : 1;
+			vectorSwitch = (width > height) // vectorSwitch = 1 горизонтальный ход, -1 вертикальный
+				? 1
+				: -1;
 			rightSteps = width / min;
 			downSteps = height / min;
 		}

@@ -1,35 +1,37 @@
-﻿using System;
-
-namespace Mazes
+﻿namespace Mazes
 {
-    public static class SnakeMazeTask
-    {
-        public static void MoveOut(Robot robot, int width, int height)
-        {
-            while (robot.Y < height - 2)
-            {
-                OneSegmentSnake(robot, width);
-                if (robot.Y < height - 2)
-                    MoveToNextSegment(robot, width);
-            }
-        }
+	public static class SnakeMazeTask
+	{
+		static int vectorSwitch = 1; // 1 = право ходи, -1 = лево ходи
+		static int downSteps = 2;
 
-        public static void MoveTolWall(Robot robot, int count, Direction direction)
-        {
-            for (int i = 0; i < count - 3; i++)
-                robot.MoveTo(direction);
-        }
+		public static void MoveOut(Robot robot, int width, int height)
+		{
+			int fieldWidth = width - 2;
+			int fieldHeight = height - 2;
+			int horizontalSteps = fieldWidth - 1;
+			while (!robot.Finished)
+			{
+				MoveToExit(robot, vectorSwitch, horizontalSteps, downSteps);
+				vectorSwitch *= -1;
+			}
+		}
 
-        public static void OneSegmentSnake(Robot robot, int width)
-        {
-            MoveTolWall(robot, width, Direction.Right);
-            MoveTolWall(robot, 5, Direction.Down);
-            MoveTolWall(robot, width, Direction.Left);
-        }
+		public static void MoveToExit(Robot robot, int vectorHorizontal, int horisontal, int vertical)
+		{
+			var direction = vectorHorizontal > 0
+				? Direction.Right
+				: Direction.Left;
+			for (int x = 0; x < horisontal; x++)
+				robot.MoveTo(direction);
+			MoveToNextHorizont(robot, vertical);
+		}
 
-        public static void MoveToNextSegment(Robot robot, int width)
-        {
-            MoveTolWall(robot, 5, Direction.Down);
-        }
-    }
+		public static void MoveToNextHorizont(Robot robot, int vertical)
+		{
+			if (!robot.Finished)
+				for (int y = 0; y < vertical; y++)
+					robot.MoveTo(Direction.Down);
+		}
+	}
 }
