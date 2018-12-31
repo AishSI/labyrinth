@@ -8,19 +8,17 @@ namespace Mazes
 		{
 			int fieldWidth = width - 2;
 			int fieldHeight = height - 2;
-			int fieldMmin = Math.Min(fieldWidth, fieldHeight);
 			Direction direction = width > height ? Direction.Right : Direction.Down;
+			(int rightSteps, int downSteps) = SettingsStep(fieldWidth, fieldHeight);
 			while (!robot.Finished)
 			{
-				MoveToExit(robot, direction, fieldWidth, fieldHeight, fieldMmin);
+				MoveToExit(robot, direction, rightSteps, downSteps);
 				direction = changeDirection(direction);
 			}
 		}
 
-		public static void MoveToExit(Robot robot, Direction direction, int fieldWidth, int fieldHeight, int fieldMmin)
+		public static void MoveToExit(Robot robot, Direction direction, int rightSteps, int downSteps)
 		{
-			(int rightSteps, int downSteps) = SettingsStep( fieldWidth, fieldHeight, fieldMmin);
-
 			if (direction == Direction.Right)
 				for (int x = 0; x < rightSteps; x++)
 					robot.MoveTo(Direction.Right);
@@ -29,8 +27,9 @@ namespace Mazes
 					robot.MoveTo(Direction.Down);
 		}
 
-		public static (int, int) SettingsStep(int fieldWidth, int fieldHeight, int fieldMmin)
+		public static (int, int) SettingsStep(int fieldWidth, int fieldHeight)
 		{
+			int fieldMmin = Math.Min(fieldWidth, fieldHeight);
 			int rightSteps = fieldWidth / fieldMmin;
 			int downSteps = fieldHeight / fieldMmin;
 			return (rightSteps, downSteps);
