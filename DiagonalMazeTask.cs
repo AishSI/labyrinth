@@ -1,45 +1,46 @@
-﻿namespace Mazes
-{
-	public static class DiagonalMazeTask
-	{
-		static int vectorSwitch;
-		static int rightSteps;
-		static int downSteps;
+﻿using System;
 
+namespace Mazes
+{
+	public class DiagonalMazeTask
+	{
 		public static void MoveOut(Robot robot, int width, int height)
 		{
 			int fieldWidth = width - 2;
 			int fieldHeight = height - 2;
-			int fieldMmin = (fieldWidth > fieldHeight)
-				? fieldHeight
-				: fieldWidth;
-
-			SettingsStep(fieldWidth, fieldHeight, fieldMmin);
-
+			int fieldMmin = Math.Min(fieldWidth, fieldHeight);
+			Direction direction = width > height ? Direction.Right : Direction.Down;
 			while (!robot.Finished)
 			{
-				MoveToExit(robot, vectorSwitch, rightSteps, downSteps);
-				vectorSwitch *= -1;
+				MoveToExit(robot, direction, fieldWidth, fieldHeight, fieldMmin);
+				direction = changeDirection(direction);
 			}
 		}
 
-		public static void SettingsStep(int width, int height, int min)
+		public static void MoveToExit(Robot robot, Direction direction, int fieldWidth, int fieldHeight, int fieldMmin)
 		{
-			vectorSwitch = (width > height) // vectorSwitch = 1 горизонтальный ход, -1 вертикальный
-				? 1
-				: -1;
-			rightSteps = width / min;
-			downSteps = height / min;
-		}
+			(int rightSteps, int downSteps) = SettingsStep( fieldWidth, fieldHeight, fieldMmin);
 
-		public static void MoveToExit(Robot robot, int vectorSwith, int rightSteps, int downSteps)
-		{
-			if (vectorSwith > 0) // vector = 1 горизонтальный ход, -1 вертикальный
+			if (direction == Direction.Right)
 				for (int x = 0; x < rightSteps; x++)
 					robot.MoveTo(Direction.Right);
-			else
+			if (direction == Direction.Down)
 				for (int y = 0; y < downSteps; y++)
 					robot.MoveTo(Direction.Down);
+		}
+
+		public static (int, int) SettingsStep(int fieldWidth, int fieldHeight, int fieldMmin)
+		{
+			int rightSteps = fieldWidth / fieldMmin;
+			int downSteps = fieldHeight / fieldMmin;
+			return (rightSteps, downSteps);
+		}
+
+		private static Direction changeDirection(Direction direction)
+		{
+			if (direction.Equals(Direction.Right))
+				return Direction.Down;
+			return Direction.Right;
 		}
 	}
 }
